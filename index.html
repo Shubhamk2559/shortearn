@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#5bcfc5;--secondary:#709fba;--warning:#ffa755;--danger:#f72b50;--bg:#f6f6f6;--card:#fff;--text:#2b2f3a;--muted:#7a8190;--line:#e9ebef;--soft:rgba(91,207,197,.12);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171c;--card:#1d2127;--text:#e8eaee;--muted:#98a0ae;--line:#2c313a;--soft:rgba(91,207,197,.16);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14171c;--card:#1d2127;--text:#e8eaee;--muted:#98a0ae;--line:#2c313a;--soft:rgba(91,207,197,.16);color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:400 15px/1.5 Cairo,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--card);z-index:30}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.side{position:fixed;top:env(safe-area-inset-top,0px);bottom:0;left:0;width:248px;background:var(--card);border-right:1px solid var(--line);z-index:20;overflow-y:auto;transition:transform .2s}
+.brand{height:64px;display:flex;align-items:center;gap:10px;padding:0 20px;font-weight:700;font-size:19px;border-bottom:1px solid var(--line)}
+.brand b{width:32px;height:32px;border-radius:9px;background:var(--primary);display:grid;place-items:center;color:#fff}
+.me{padding:18px 20px;display:flex;gap:12px;align-items:center;border-bottom:1px solid var(--line)}
+.av{width:42px;height:42px;border-radius:50%;background:var(--soft);color:var(--primary);display:grid;place-items:center;font-weight:700}
+.me small{display:block;color:var(--muted);line-height:1.3}
+.menu{list-style:none;margin:0;padding:10px}
+.menu a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:var(--muted);text-decoration:none;font-weight:600}
+.menu a:hover{background:var(--soft);color:var(--text)}
+.menu a.on{background:var(--primary);color:#fff}
+.scrim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:15}
+.main{margin-left:248px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;height:64px;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:0 24px}
+.top h1{font-size:20px;margin:0;font-weight:700}
+.sp{flex:1}
+.btn{border:0;border-radius:10px;padding:8px 16px;font:600 14px Cairo,sans-serif;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--soft);color:var(--primary);text-decoration:none}
+.btn.fill{background:var(--primary);color:#fff}
+.btn.lg{padding:12px 20px;font-size:16px;width:100%}
+.btn.dark{background:rgba(255,255,255,.22);color:#fff}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn:focus-visible,.menu a:focus-visible,select:focus-visible,input:focus-visible,.tabs button:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.ham{display:none;background:none;border:0;color:var(--text);padding:6px;cursor:pointer}
+.wrap{padding:24px;max-width:1280px}
+.page{display:none}.page.on{display:block}
+.alert{display:flex;align-items:center;gap:10px;background:var(--danger);color:#fff;border-radius:12px;padding:12px 16px;font-weight:600;margin-bottom:20px}
+.alert a{margin-left:auto;background:rgba(255,255,255,.22);color:#fff;border-radius:8px;padding:2px 12px;font-size:13px;text-decoration:none;white-space:nowrap}
+.bar{display:flex;align-items:center;gap:10px;background:var(--soft);border-radius:12px;padding:10px 16px;margin:0 0 16px;font-weight:600}
+.bar span{margin-left:auto;font-size:13px;color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.cards.c3{grid-template-columns:repeat(3,1fr)}
+.c{border-radius:14px;color:#fff;padding:18px;display:flex;gap:14px;align-items:center}
+.c .ic{width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.4);display:grid;place-items:center}
+.c.big .ic{order:2;margin-left:auto;background:none;border:1px solid rgba(255,255,255,.5)}
+.c small{display:block;font-size:15px;opacity:.95}
+.c h2{margin:0;font-size:26px;line-height:1.2}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:24px;overflow:hidden}
+.box>.in{padding:20px}
+.box h3{margin:0;font-size:17px}
+.box p{margin:2px 0 14px;color:var(--muted);font-size:14px}
+.bh{background:var(--primary);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.bh h3{color:#fff}
+.bf{padding:0 20px 20px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.goal{background:var(--secondary);color:#fff;border-radius:12px;padding:18px;display:flex;gap:16px;align-items:center}
+.goal b{font-size:26px;margin-left:auto}
+.prog{height:8px;border-radius:8px;background:rgba(255,255,255,.35);margin:10px 0 6px;overflow:hidden}
+.prog i{display:block;height:100%;background:#fff;border-radius:8px;transition:width .4s}
+.pm{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:16px}
+.pm .av{border-radius:10px}
+.pm small{color:var(--muted);display:block;line-height:1.3}
+.min{font-size:26px;font-weight:700;margin:2px 0 0}
+select,input[type=text],input[type=url]{width:100%;background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:600 14px Cairo,sans-serif}
+.pick{display:flex;justify-content:center;margin:0 0 16px}.pick select{width:auto;min-width:200px}
+label{display:block;font-weight:600;margin:12px 0 4px;font-size:14px}
+.chart{position:relative}
+.chart svg{width:100%;height:auto;display:block;touch-action:pan-y}
+.tip{position:absolute;top:0;pointer-events:none;background:#23272f;color:#fff;border-radius:8px;padding:6px 10px;font-size:12px;line-height:1.5;white-space:nowrap;opacity:0;transition:opacity .1s}
+.tabs{display:flex;gap:6px;background:var(--bg);border-radius:12px;padding:4px;margin-bottom:14px}
+.tabs button{flex:1;border:0;background:none;color:var(--muted);padding:8px;border-radius:9px;font:600 14px Cairo,sans-serif;cursor:pointer}
+.tabs button.on{background:var(--primary);color:#fff}
+.tw{overflow-x:auto;max-height:420px;overflow-y:auto}
+table{width:100%;border-collapse:collapse;min-width:520px;font-size:14px}
+th,td{padding:10px 12px;text-align:center;border-bottom:1px solid var(--line);white-space:nowrap}
+th{position:sticky;top:0;background:var(--card);color:var(--muted);font-weight:600}
+td:first-child,th:first-child{text-align:left}
+.pill{border-radius:20px;padding:2px 10px;font-size:12px;font-weight:600}
+.pill.a{background:rgba(91,207,197,.18);color:#1f9d92}.pill.p{background:rgba(255,167,85,.2);color:#c46a0e}.pill.d{background:rgba(247,43,80,.12);color:var(--danger)}
+.empty{padding:24px;text-align:center;color:var(--muted)}
+.foot{text-align:center;color:var(--muted);font-size:13px;padding:8px 0 24px}
+dialog{border:0;border-radius:16px;padding:24px;background:var(--card);color:var(--text);width:min(440px,92vw)}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+dialog h2{margin:0 0 4px;font-size:20px}
+.row{display:flex;gap:10px;margin-top:18px}.row .btn{flex:1}
+.err{color:var(--danger);font-size:13px;min-height:20px;margin-top:6px}
+.res{display:flex;gap:8px;margin-top:6px}
+.sw{display:flex;align-items:center;gap:10px;margin-top:14px;font-weight:600}.sw input{width:20px;height:20px;accent-color:var(--primary)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:#23272f;color:#fff;padding:10px 18px;border-radius:10px;opacity:0;transition:.2s;z-index:60;font-weight:600;max-width:92vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%)}
+.filt{display:grid;grid-template-columns:1fr 1fr 1.4fr auto auto auto;gap:10px;align-items:center;padding:16px}
+.lk{padding:18px 20px;margin-bottom:16px}
+.lk h3{display:flex;align-items:center;gap:8px;font-size:16px}
+.lk .meta{color:var(--muted);font-size:13px;margin:4px 0 10px;overflow-wrap:anywhere}
+.lk .meta a{color:var(--primary);text-decoration:none;font-weight:600;cursor:pointer}
+.ig{display:flex;gap:8px;margin-bottom:10px}
+.btn.red{background:rgba(247,43,80,.12);color:var(--danger)}
+.pg{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.pc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:6px}
+.pc.sel{border-color:var(--primary);box-shadow:0 0 0 2px var(--soft)}
+.pc .logo{height:84px;border-radius:12px;background:var(--soft);color:var(--primary);display:grid;place-items:center;font-weight:700;font-size:28px;margin-bottom:6px}
+.pc h4{margin:0;font-size:17px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pc ul{list-style:none;margin:0 0 10px;padding:0;color:var(--muted);font-size:14px;flex:1}
+.tsc{border-left:4px solid var(--warning)}.tsc.approved{border-left-color:var(--primary)}.tsc.rejected{border-left-color:var(--danger)}
+.tsc .meta a{overflow-wrap:anywhere}
+[hidden]{display:none!important}
+@media (max-width:1100px){.cards{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:860px){.side{transform:translateX(-100%)}.side.open{transform:none}.side.open~.scrim{display:block}.main{margin-left:0}.ham{display:block}.top{padding:0 14px}.wrap{padding:16px}.two,.cards.c3{grid-template-columns:1fr}.filt{grid-template-columns:1fr 1fr}.pg{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.pg,.filt{grid-template-columns:1fr}.cards{grid-template-columns:1fr}.top .btn span{display:none}.c h2{font-size:23px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+<symbol id="users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6M17 4a4 4 0 0 1 0 8M22 21c0-3-2-5-4-5.6"/></symbol>
+<symbol id="link" viewBox="0 0 24 24"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></symbol>
+<symbol id="wallet" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h13v4M3 7v11a2 2 0 0 0 2 2h15V9H5a2 2 0 0 1-2-2zM16 14.5h.01"/></symbol>
+<symbol id="bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 0 0 4 0"/></symbol>
+<symbol id="gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></symbol>
+<symbol id="eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M14.5 9a2.5 2 0 0 0-5 0c0 3 5 1.5 5 4.5a2.5 2 0 0 1-5 0M12 6.5V8M12 16v1.5"/></symbol>
+<symbol id="cpm" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+<symbol id="menu" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></symbol>
+<symbol id="moon" viewBox="0 0 24 24"><path d="M21 13a9 9 0 1 1-10-10 7 7 0 0 0 10 10z"/></symbol>
+<symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></symbol>
+<symbol id="globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol>
+<symbol id="edit" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol><symbol id="trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/></symbol>
+<symbol id="warn" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.700 3.900a2 2 0 0 0-3.400 0zM12 9v4M12 17h.01"/></symbol>
+</svg>
+
+<aside class="side" id="side">
+  <div class="brand"><b><svg class="i"><use href="#link"/></svg></b>ShortEarn</div>
+  <div class="me"><div class="av">S</div><div><b>Hi, shubham</b><small>Balance: <span id="bal"></span></small></div></div>
+  <ul class="menu" id="menu">
+    <li><a href="#dashboard" data-p="dashboard"><svg class="i"><use href="#grid"/></svg>Dashboard</a></li>
+    <li><a href="#links" data-p="links"><svg class="i"><use href="#link"/></svg>Manage links</a></li>
+    <li><a href="#withdraw" data-p="withdraw"><svg class="i"><use href="#wallet"/></svg>Withdraw funds</a></li>
+    <li><a href="#payments" data-p="payments"><svg class="i"><use href="#wallet"/></svg>Payment methods</a></li>
+    <li><a href="#sources" data-p="sources"><svg class="i"><use href="#globe"/></svg>Traffic sources</a></li>
+    <li><a href="#referrals" data-p="x"><svg class="i"><use href="#users"/></svg>Referrals</a></li>
+    <li><a href="#news" data-p="x"><svg class="i"><use href="#bell"/></svg>Announcements</a></li>
+    <li><a href="#settings" data-p="x"><svg class="i"><use href="#gear"/></svg>Settings</a></li>
+  </ul>
+</aside>
+<div class="scrim" id="scrim"></div>
+
+<div class="main">
+  <header class="top">
+    <button class="ham" id="ham" aria-label="Open menu"><svg class="i"><use href="#menu"/></svg></button>
+    <h1 id="title">Dashboard</h1>
+    <div class="sp"></div>
+    <button class="btn" id="theme" aria-label="Switch theme"><svg class="i"><use href="#moon"/></svg></button>
+    <button class="btn fill" id="shorten"><svg class="i"><use href="#plus"/></svg><span>Shorten link</span></button>
+  </header>
+
+  <main class="wrap">
+    <div class="alert" id="alert"><svg class="i"><use href="#warn"/></svg><span>Please set up your preferred payment method to avoid any delays.</span><a href="#payments">Set up</a></div>
+
+    <!-- DASHBOARD -->
+    <section class="page" id="p-dashboard">
+      <div class="bar">Today’s report <span id="now"></span></div>
+      <div class="cards" id="today"></div>
+      <div class="pick"><select id="month" aria-label="Month"></select></div>
+      <div class="bar">This month’s report <span id="mlabel"></span></div>
+      <div class="cards" id="monthly"></div>
+      <section class="box"><div class="in">
+        <h3>Your earnings</h3><p>Visualize your income through our earnings chart.</p>
+        <div class="chart" id="chart"></div>
+        <p style="margin:8px 0 0;text-align:right;font-size:13px">Data is reported in Asia/Kolkata timezone</p>
+      </div></section>
+      <section class="box"><div class="in">
+        <h3 style="margin-bottom:12px">Statistics</h3>
+        <div class="tabs" id="tabs"><button class="on" data-t="daily">Table</button><button data-t="top">Top 10 links</button></div>
+        <div class="tw" id="tbl"></div>
+      </div></section>
+    </section>
+
+    <!-- MANAGE LINKS -->
+    <section class="page" id="p-links">
+      <section class="box"><div class="filt">
+        <input type="text" id="fAlias" placeholder="Alias" aria-label="Alias">
+        <select id="fAd" aria-label="Advertising type"><option value="">Advertising type</option><option value="2">Banner advertisement</option></select>
+        <input type="text" id="fText" placeholder="Title, desc. or URL" aria-label="Search links">
+        <button class="btn fill" id="fGo">Filter</button><button class="btn" id="fReset">Reset</button>
+        <button class="btn red" id="fDel"><svg class="i"><use href="#trash"/></svg><span id="fDelT">Recover deleted links</span></button>
+      </div></section>
+      <div id="linkList"></div>
+    </section>
+
+    <!-- TRAFFIC SOURCES -->
+    <section class="page" id="p-sources">
+      <div class="box"><div class="in" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <div style="flex:1;min-width:220px"><h3>Traffic sources</h3><p style="margin:2px 0 0">Manage your traffic source verifications and track their approval status.</p></div>
+        <a class="btn fill" href="#add-source"><svg class="i"><use href="#plus"/></svg>Add new source</a>
+      </div></div>
+      <div id="srcList"></div>
+    </section>
+
+    <!-- ADD TRAFFIC SOURCE -->
+    <section class="page" id="p-add-source"><section class="box"><div class="in">
+      <h3>Add traffic source</h3><p>Add a new traffic source so we can verify where your traffic comes from.</p>
+      <div class="two" style="gap:16px">
+        <div><label for="srcType">Select source type</label><select id="srcType"><option value="">Select traffic source</option><option value="telegram">Telegram</option><option value="website">Website</option><option value="youtube">YouTube</option><option value="others">Others</option></select></div>
+        <div><label for="srcUrl">Traffic source URL</label><input type="url" id="srcUrl" placeholder="https://example.com" disabled></div>
+      </div>
+      <p id="srcHint" style="display:none;margin:10px 0 0">After you submit, you’ll get a short code to paste into your channel or bot description. We verify it automatically.</p>
+      <div class="err" id="srcErr"></div>
+      <div class="row" style="max-width:420px"><a class="btn" href="#sources">Cancel</a><button class="btn fill" id="srcGo">Submit traffic source</button></div>
+    </div></section></section>
+
+    <!-- PAYMENT METHODS -->
+    <section class="page" id="p-payments"><div class="pg" id="pg"></div></section>
+
+    <!-- WITHDRAW -->
+    <section class="page" id="p-withdraw">
+      <div class="cards c3" id="wcards"></div>
+      <div class="two">
+        <section class="box">
+          <div class="bh"><h3>Your earnings</h3><button class="btn dark" id="autoBtn">Auto withdrawal</button></div>
+          <div class="in"><div class="goal">
+            <svg class="i" style="width:40px;height:40px"><use href="#coin"/></svg>
+            <div style="flex:1"><div>Paid on request if the total is at least <b style="font-size:inherit;margin:0" id="minA"></b></div>
+            <div class="prog"><i id="pbar"></i></div><small id="ptxt"></small></div>
+            <b id="gbal"></b></div></div>
+          <div class="bf"><button class="btn fill lg" id="wbtn">Withdraw</button></div>
+        </section>
+        <section class="box">
+          <div class="in"><h3>Your chosen payment method</h3><p>Please double-check that the payment address you provided is accurate.</p>
+            <div class="pm"><div class="av"><svg class="i"><use href="#wallet"/></svg></div><div><b id="pmName"></b><small id="pmAddr"></small></div></div>
+            <h3>Minimum amount</h3><div class="min" id="minB"></div></div>
+          <div class="bf"><button class="btn fill lg" id="pmBtn">Manage payment</button></div>
+        </section>
+      </div>
+      <section class="box"><div class="in"><h3 style="margin-bottom:12px">Withdrawal history</h3><div class="tw" id="hist"></div></div></section>
+    </section>
+
+    <div class="foot">Demo data. Connect your database to show real numbers.</div>
+  </main>
+</div>
+
+<dialog id="dShort">
+  <h2>Shorten your links</h2>
+  <label for="url">Enter your URL</label><input type="url" id="url" placeholder="https://example.com/file">
+  <label for="alias">Alias (optional)</label><input type="text" id="alias" placeholder="my-file">
+  <div class="err" id="serr"></div>
+  <div class="res" id="sres" hidden><input type="text" id="sout" readonly><button class="btn fill" id="scopy"><svg class="i"><use href="#copy"/></svg>Copy</button></div>
+  <div class="row"><button class="btn" data-close>Close</button><button class="btn fill" id="sgo">Shorten</button></div>
+</dialog>
+<dialog id="dConfirm">
+  <h2>Are you sure?</h2><p id="cTxt" style="color:var(--muted)"></p>
+  <div class="row"><button class="btn" data-close>No thanks</button><button class="btn fill" id="cYes">Yes, request</button></div>
+</dialog>
+<dialog id="dPm">
+  <h2 id="pmTitle">Add method</h2><p id="pmInfo" style="color:var(--muted)"></p>
+  
+  <label for="pmIn" id="pmLab">Payment address</label><input type="text" id="pmIn">
+  <div class="err" id="perr"></div>
+  <div class="row"><button class="btn" data-close>Cancel</button><button class="btn fill" id="pmSave">Save method</button></div>
+</dialog>
+<dialog id="dAuto">
+  <h2>Auto withdrawal</h2><p style="color:var(--muted)">Request a payout automatically once your balance reaches the minimum.</p>
+  <label class="sw"><input type="checkbox" id="autoChk">Turn on auto withdrawal</label>
+  <div class="row"><button class="btn" data-close>Cancel</button><button class="btn fill" id="autoSave">Save</button></div>
+</dialog>
+<dialog id="dVer">
+  <h2>Verify your Telegram source</h2>
+  <p style="color:var(--muted);overflow-wrap:anywhere;margin:2px 0 14px" id="vUrl"></p>
+  <p style="margin:0 0 6px"><b>1.</b> Copy your verification code.</p>
+  <div class="ig"><div id="vCode" style="flex:1;font:700 22px/1 Cairo,monospace;letter-spacing:.08em;border:1px dashed var(--primary);border-radius:10px;padding:12px 14px;background:var(--soft)"></div><button class="btn fill" id="vCopy" aria-label="Copy code"><svg class="i"><use href="#copy"/></svg></button></div>
+  <p style="margin:0 0 6px"><b>2.</b> Paste it near the start of your description. Channel: Edit, then Description. Bot: BotFather, then /setabouttext.</p>
+  <p style="margin:0 0 6px"><b>3.</b> Save it in Telegram and press Check now.<span id="vAuto"> We also re-check automatically every few minutes.</span></p>
+  <label class="sw" id="vDemo"><input type="checkbox" id="vDemoChk">Demo mode: pretend my code is in the description</label>
+  <div class="err" id="vMsg"></div>
+  <div class="row"><button class="btn" data-close>Later</button><button class="btn fill" id="vGo">Check now</button></div>
+</dialog>
+<dialog id="dSrc">
+  <h2>Source details</h2><div id="srcDet" style="margin-top:10px"></div>
+  <div class="row"><button class="btn" data-close>Close</button></div>
+</dialog>
+<dialog id="dEdit">
+  <h2>Edit link</h2><p id="eAlias" style="color:var(--muted);overflow-wrap:anywhere"></p>
+  <label for="eUrl">Destination URL</label><input type="url" id="eUrl">
+  <div class="err" id="eerr"></div>
+  <div class="row"><button class="btn" data-close>Cancel</button><button class="btn fill" id="eSave">Save changes</button></div>
+</dialog>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],pad=n=>String(n).padStart(2,'0');
+const usd=n=>'$'+n.toFixed(3),usd2=n=>'$'+n.toFixed(2),num=n=>n.toLocaleString('en-US');
+const rng=s=>()=>(s=(s*1664525+1013904223)>>>0)/4294967296;
+const DOMAIN='yourdomain.com/';
+const METHODS=[['upi','UPI',2,'pct',5,'UPI ID','name@bank'],['bank','Bank Transfer (India)',0,'',5,'Account number and IFSC','1234567890, ABCD0123456'],['wire','Wire Transfer (International)',0,'',15,'IBAN and SWIFT code','IBAN, SWIFT'],['paypal','PayPal',0,'',5,'PayPal email','you@example.com'],['payoneer','Payoneer',0,'',5,'Payoneer email','you@example.com'],['bkash','BKash',0,'',5,'BKash number','01XXXXXXXXX'],['nagad','Nagad',0,'',5,'Nagad number','01XXXXXXXXX'],['usdt','USDT (BEP-20)',2,'fix',10,'BEP-20 wallet address','0x...'],['usdc','USDC (BEP-20)',2,'fix',10,'BEP-20 wallet address','0x...'],['tron','Tron (TRC-20)',1,'fix',10,'TRC-20 wallet address','T...'],['ltc','Litecoin (LTC)',1,'fix',10,'Litecoin address','L...'],['amazon','Amazon Gift Card (INR)',0,'',5,'Email for the gift card','you@example.com'],['gplay','Google Play Gift Card (INR)',0,'',5,'Email for the gift card','you@example.com'],['bal','Balance Transfer',0,'',5,'Account username','username']].map(a=>({id:a[0],name:a[1],fee:a[2],ft:a[3],min:a[4],lab:a[5],ph:a[6]}));
+const M=id=>METHODS.find(m=>m.id===id);
+const chargeTxt=m=>m.ft==='pct'?`${m.fee}% charge`:m.ft==='fix'?`$${m.fee} fixed charge`:'No extra charges';
+const feeOf=(m,a)=>m.ft==='pct'?a*m.fee/100:m.ft==='fix'?m.fee:0;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const S={bal:12.48,pend:0,tot:35,method:null,addr:'',auto:false,hist:[{d:'2026-10-12',m:'UPI',a:35,s:'a'}],
+  links:[['sho1','https://example.com/movie-pack',5210,'2026-10-29T14:30'],['tg-files','https://t.me/yourchannel',3480,'2026-10-24T09:10'],['apk-pro','https://example.com/apk/pro',2150,'2026-10-15T21:45'],['notes12','https://example.com/study/notes',1320,'2026-10-03T18:05']].map(l=>({a:l[0],u:l[1],v:l[2],d:l[3],del:false}))};
+const months=[...Array(6)].map((_,i)=>{const d=new Date(2026,9-i,1);return{y:d.getFullYear(),m:d.getMonth(),label:d.toLocaleString('en-US',{month:'long',year:'numeric'})}});
+function build(mo){const r=rng(mo.y*12+mo.m+11),n=new Date(mo.y,mo.m+1,0).getDate();
+  return[...Array(n)].map((_,i)=>{const v=Math.round(250+r()*450+i*6),cpm=+(2+r()*2).toFixed(2),e=v*cpm/1000;
+  return{date:`${mo.y}-${pad(mo.m+1)}-${pad(i+1)}`,views:v,cpm,earn:e,ref:e*.1*r()}})}
+const sum=a=>{const v=a.reduce((x,r)=>x+r.views,0),e=a.reduce((x,r)=>x+r.earn,0);return{views:v,cpm:v?e/v*1000:0,ref:a.reduce((x,r)=>x+r.ref,0),earn:e}};
+const cards=s=>[['var(--primary)','eye','Views',num(s.views)],['var(--warning)','cpm','Average CPM','$'+s.cpm.toFixed(2)],['var(--secondary)','users','Referral earnings',usd(s.ref)],['var(--danger)','coin','Earnings',usd(s.earn)]]
+  .map(c=>`<div class="c" style="background:${c[0]}"><div class="ic"><svg class="i"><use href="#${c[1]}"/></svg></div><div><small>${c[2]}</small><h2>${c[3]}</h2></div></div>`).join('');
+const toast=t=>{const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),2200)};
+const minAmt=()=>S.method?M(S.method).min:5;
+
+let cur=0,tab='daily',rows=[];
+function renderMonth(){rows=build(months[cur]);$('#mlabel').textContent=months[cur].label;$('#monthly').innerHTML=cards(sum(rows));chart();table()}
+function chart(){const W=700,H=260,L=44,R=12,T=14,B=28,mx=Math.max(...rows.map(r=>r.earn))*1.15,n=rows.length;
+  const x=i=>L+i*(W-L-R)/(n-1),y=v=>T+(1-v/mx)*(H-T-B),ln=rows.map((r,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(r.earn).toFixed(1)).join('');
+  let g='';for(let k=0;k<=4;k++){const v=mx*k/4,yy=y(v);g+=`<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" stroke="var(--line)"/><text x="${L-8}" y="${yy+4}" text-anchor="end" font-size="11" fill="var(--muted)">$${v.toFixed(1)}</text>`}
+  for(let i=0;i<n;i+=5)g+=`<text x="${x(i)}" y="${H-8}" text-anchor="middle" font-size="11" fill="var(--muted)">${i+1}</text>`;
+  $('#chart').innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Daily earnings">${g}<path d="${ln}L${x(n-1)} ${y(0)}L${x(0)} ${y(0)}Z" fill="var(--primary)" opacity=".2"/><path d="${ln}" fill="none" stroke="var(--primary)" stroke-width="2.5"/><line id="vl" y1="${T}" y2="${H-B}" stroke="var(--muted)" stroke-dasharray="3 3" opacity="0"/></svg><div class="tip" id="tip"></div>`;
+  const svg=$('#chart svg'),tip=$('#tip'),vl=$('#vl');
+  const mv=e=>{const b=svg.getBoundingClientRect(),i=Math.max(0,Math.min(n-1,Math.round(((e.clientX-b.left)/b.width*W-L)/((W-L-R)/(n-1))))),r=rows[i];
+    vl.setAttribute('x1',x(i));vl.setAttribute('x2',x(i));vl.style.opacity=1;tip.innerHTML=`${r.date}<br>Earnings ${usd(r.earn)}<br>Views ${num(r.views)}`;tip.style.opacity=1;
+    tip.style.left=Math.min(Math.max(x(i)/W*b.width-55,0),b.width-125)+'px'};
+  svg.addEventListener('pointermove',mv);svg.addEventListener('pointerdown',mv);svg.addEventListener('pointerleave',()=>{tip.style.opacity=0;vl.style.opacity=0})}
+function table(){let h='';
+  if(tab==='daily')h=`<table><thead><tr><th>Date</th><th>Views</th><th>Daily CPM</th><th>Link earnings</th><th>Referral earnings</th></tr></thead><tbody>`+rows.map(r=>`<tr><td>${r.date}</td><td>${num(r.views)}</td><td>$${r.cpm.toFixed(2)}</td><td>${usd(r.earn)}</td><td>${usd(r.ref)}</td></tr>`).join('')+`</tbody></table>`;
+  else{const t=S.links.filter(l=>!l.del).sort((a,b)=>b.v-a.v).slice(0,10);
+    h=`<table><thead><tr><th>Short link</th><th>Views</th><th>Earnings</th><th>Copy</th></tr></thead><tbody>`+t.map(l=>`<tr><td>${DOMAIN}${l.a}</td><td>${num(l.v)}</td><td>${usd(l.v*3/1000)}</td><td><button class="btn" data-copy="https://${DOMAIN}${l.a}" aria-label="Copy link"><svg class="i"><use href="#copy"/></svg></button></td></tr>`).join('')+`</tbody></table>`}
+  $('#tbl').innerHTML=h}
+$('#tabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;tab=b.dataset.t;$$('#tabs button').forEach(x=>x.classList.toggle('on',x===b));table()};
+$('#tbl').onclick=e=>{const b=e.target.closest('[data-copy]');if(b)copy(b.dataset.copy)};
+async function copy(t){try{await navigator.clipboard.writeText(t);toast('Copied successfully')}catch{toast('Copy failed. Select the link and copy it.')}}
+
+function renderW(){const m=minAmt(),pct=Math.min(100,S.bal/m*100);
+  $('#bal').textContent=usd2(S.bal);$('#gbal').textContent=usd(S.bal);
+  $('#wcards').innerHTML=[['rgb(70,75,216)','Available balance',S.bal],['rgb(31,48,61)','Pending withdraw',S.pend],['rgb(47,211,101)','Total withdraw',S.tot]]
+    .map(c=>`<div class="c big" style="background:${c[0]}"><div class="ic"><svg class="i"><use href="#wallet"/></svg></div><div><small>${c[1]}</small><h2>${usd(c[2])}</h2></div></div>`).join('');
+  $('#minA').textContent=usd2(m);$('#minB').textContent=usd2(m);$('#pbar').style.width=pct+'%';$('#ptxt').textContent=`You’ve reached ${Math.floor(pct)}% of your payout`;
+  $('#pmName').textContent=S.method?M(S.method).name:'No method selected';$('#pmAddr').textContent=S.method?S.addr:'Please choose a payment method';
+  $('#alert').style.display=S.method?'none':'';
+  $('#autoBtn').textContent=S.auto?'Auto withdrawal: on':'Auto withdrawal';
+  $('#hist').innerHTML=`<table><thead><tr><th>Date</th><th>Method</th><th>Amount</th><th>Status</th></tr></thead><tbody>`+S.hist.map(h=>`<tr><td>${h.d}</td><td>${h.m}</td><td>${usd2(h.a)}</td><td><span class="pill ${h.s}">${{a:'Paid',p:'Pending',d:'Rejected'}[h.s]}</span></td></tr>`).join('')+`</tbody></table>`}
+
+const dlg=id=>$(id);
+$$('[data-close]').forEach(b=>b.onclick=()=>b.closest('dialog').close());
+$('#wbtn').onclick=()=>{const m=minAmt();
+  if(!S.method)return toast('Choose a payment method first');
+  if(S.bal<m)return toast(`Minimum withdrawal is ${usd2(m)}. Keep earning.`);
+  const mm=M(S.method),f=feeOf(mm,S.bal);$('#cTxt').textContent=`Withdraw ${usd(S.bal)} to ${mm.name}? ${f?`Charge: ${usd2(f)}. You will receive ${usd2(S.bal-f)}.`:'No extra charges.'}`;dlg('#dConfirm').showModal()};
+$('#cYes').onclick=()=>{const a=S.bal;S.pend+=a;S.bal=0;S.hist.unshift({d:'2026-10-31',m:M(S.method).name,a,s:'p'});dlg('#dConfirm').close();renderW();toast('Withdrawal requested')};
+$('#pmBtn').onclick=()=>{location.hash='payments'};
+let pmId=null;
+function openPm(id){const m=M(id);pmId=id;$('#pmTitle').textContent=(S.method===id?'Edit ':'Add ')+m.name;$('#pmInfo').textContent=`${chargeTxt(m)}. Minimum payout: $${m.min}.`;$('#pmLab').textContent=m.lab;$('#pmIn').placeholder=m.ph;$('#pmIn').value=S.method===id?S.addr:'';$('#perr').textContent='';dlg('#dPm').showModal()}
+$('#pg').onclick=e=>{const b=e.target.closest('[data-m]');if(b)openPm(b.dataset.m)};
+$('#pmSave').onclick=()=>{const v=$('#pmIn').value.trim();if(v.length<4)return $('#perr').textContent='Enter a valid payment address.';
+  S.method=pmId;S.addr=v;dlg('#dPm').close();renderW();renderPay();toast('Payment method saved')};
+$('#autoBtn').onclick=()=>{$('#autoChk').checked=S.auto;dlg('#dAuto').showModal()};
+$('#autoSave').onclick=()=>{if($('#autoChk').checked&&!S.method)return toast('Set a payment method first');S.auto=$('#autoChk').checked;dlg('#dAuto').close();renderW()};
+
+$('#shorten').onclick=()=>{$('#serr').textContent='';$('#sres').hidden=true;dlg('#dShort').showModal()};
+$('#sgo').onclick=()=>{const u=$('#url').value.trim(),a=$('#alias').value.trim();
+  if(!/^https?:\/\/.+\..+/.test(u))return $('#serr').textContent='Enter a full URL starting with http:// or https://';
+  if(a&&!/^[\w-]{3,30}$/.test(a))return $('#serr').textContent='Alias can use letters, numbers, - and _ (3 to 30 characters).';
+  if(a&&S.links.some(l=>l.a===a))return $('#serr').textContent='That alias is taken. Try another one.';
+  const c=a||Math.random().toString(36).slice(2,8);S.links.unshift({a:c,u,v:0,d:new Date().toISOString(),del:false});$('#serr').textContent='';$('#sout').value='https://'+DOMAIN+c;$('#sres').hidden=false;table();renderLinks()};
+$('#scopy').onclick=()=>copy($('#sout').value);
+
+let showDel=false,F={a:'',t:''},edA=null;
+const host=u=>{try{return new URL(u).hostname.toUpperCase()}catch{return u}};
+const fmtD=d=>new Date(d).toLocaleString('en-US',{month:'numeric',day:'numeric',year:'2-digit',hour:'numeric',minute:'2-digit'});
+function renderLinks(){
+  const L=S.links.filter(l=>l.del===showDel&&l.a.toLowerCase().includes(F.a)&&(l.u+' '+l.a).toLowerCase().includes(F.t));
+  $('#fDelT').textContent=showDel?'Back to links':'Recover deleted links';
+  $('#linkList').innerHTML=L.length?L.map(l=>`<div class="box lk"><h3><svg class="i"><use href="#link"/></svg>${esc(l.a)}</h3><div class="meta"><a data-st="${esc(l.a)}">Stats</a> - ${fmtD(l.d)} :- <a href="${esc(l.u)}" target="_blank" rel="nofollow noopener noreferrer">${esc(host(l.u))}</a></div><div class="ig"><input type="text" readonly value="https://${DOMAIN}${esc(l.a)}" aria-label="Short link"><button class="btn fill" data-copy="https://${DOMAIN}${esc(l.a)}" aria-label="Copy link"><svg class="i"><use href="#copy"/></svg></button></div>`+(showDel?`<button class="btn" data-rec="${esc(l.a)}">Recover</button>`:`<button class="btn fill" data-ed="${esc(l.a)}"><svg class="i"><use href="#edit"/></svg>Edit</button> <button class="btn red" data-rm="${esc(l.a)}"><svg class="i"><use href="#trash"/></svg>Delete</button>`)+`</div>`).join(''):`<div class="box"><div class="empty">${showDel?'No deleted links.':'No links found. Use Shorten link to create one.'}</div></div>`}
+$('#fGo').onclick=()=>{F.a=$('#fAlias').value.trim().toLowerCase();F.t=$('#fText').value.trim().toLowerCase();renderLinks()};
+$('#fReset').onclick=()=>{$('#fAlias').value=$('#fText').value=$('#fAd').value='';F={a:'',t:''};showDel=false;renderLinks()};
+$('#fDel').onclick=()=>{showDel=!showDel;renderLinks()};
+$('#linkList').onclick=e=>{const g=k=>{const b=e.target.closest(`[${k}]`);return b&&b.getAttribute(k)},f=a=>S.links.find(l=>l.a===a);let a;
+  if(a=g('data-copy'))return copy(a);
+  if(a=g('data-st')){const l=f(a);return toast(`${a}: ${num(l.v)} views, ${usd2(l.v*3/1000)} earned`)}
+  if(a=g('data-ed')){edA=a;$('#eAlias').textContent='https://'+DOMAIN+a;$('#eUrl').value=f(a).u;$('#eerr').textContent='';return dlg('#dEdit').showModal()}
+  if(a=g('data-rm')){f(a).del=true;toast('Link deleted');table();return renderLinks()}
+  if(a=g('data-rec')){f(a).del=false;toast('Link recovered');table();renderLinks()}};
+$('#eSave').onclick=()=>{const u=$('#eUrl').value.trim();if(!/^https?:\/\/.+\..+/.test(u))return $('#eerr').textContent='Enter a full URL starting with http:// or https://';S.links.find(l=>l.a===edA).u=u;dlg('#dEdit').close();renderLinks();toast('Link updated')};
+S.sources=[{id:1,t:'telegram',u:'https://t.me/yourchannel',d:'2026-04-30T11:31',s:'approved'}];
+const SRC={telegram:['Telegram','https://t.me/yourchannel',/^https?:\/\/(t|telegram)\.me\/[A-Za-z0-9_]{4,32}\/?$/i,'Enter a public Telegram link like https://t.me/yourchannel. Invite links that start with + can’t be verified.'],website:['Website','https://example.com',/^https?:\/\/.+\..+/i,'Enter a full website URL starting with http:// or https://'],youtube:['YouTube','https://youtube.com/@yourchannel',/^https?:\/\/(www\.|m\.)?(youtube\.com|youtu\.be)\/.+/i,'Enter a YouTube link like https://youtube.com/@yourchannel'],others:['Others','https://example.com/page',/^https?:\/\/.+\..+/i,'Enter a full URL starting with http:// or https://']};
+const ST={approved:['a','Approved'],verify:['p','Verification needed'],pending:['p','Pending review'],rejected:['d','Rejected']};
+function renderSrc(){$('#srcList').innerHTML=S.sources.length?S.sources.map(x=>{const st=ST[x.s];return `<div class="box lk tsc ${x.s}"><div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><div style="min-width:0"><b>${SRC[x.t][0]}</b><div class="meta" style="margin-bottom:0"><a href="${esc(x.u)}" target="_blank" rel="nofollow noopener noreferrer">${esc(x.u)}</a></div></div><span class="pill ${st[0]}">${st[1]}</span></div><div class="meta">${fmtD(x.d)}</div>${x.s==='verify'?`<button class="btn fill" data-vf="${x.id}">Verify now</button> `:''}<button class="btn" data-sv="${x.id}"><svg class="i"><use href="#eye"/></svg>View details</button> <button class="btn red" data-sd="${x.id}"><svg class="i"><use href="#trash"/></svg>Delete</button></div>`}).join(''):`<div class="box"><div class="empty">No traffic sources yet. Add one to get it verified.</div></div>`}
+$('#srcType').onchange=()=>{const t=$('#srcType').value,u=$('#srcUrl');u.disabled=!t;u.placeholder=t?SRC[t][1]:'https://example.com';$('#srcErr').textContent='';$('#srcHint').style.display=t==='telegram'?'':'none'};
+$('#srcGo').onclick=async()=>{const t=$('#srcType').value,u=$('#srcUrl').value.trim(),er=$('#srcErr'),norm=x=>x.replace(/\/$/,'').toLowerCase();
+  if(!t)return er.textContent='Select a source type first.';
+  if(!SRC[t][2].test(u))return er.textContent=SRC[t][3];
+  if(S.sources.some(x=>norm(x.u)===norm(u)))return er.textContent='This source is already on your list.';
+  const tg=t==='telegram',ns={id:Date.now(),t,u,d:new Date().toISOString(),s:tg?'verify':'pending'};
+  if(tg){if(VERIFY_API){try{const r=await fetch('/api/sources',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:u})}),j=await r.json();if(!r.ok)return er.textContent=j.error||'Could not add this source.';ns.id=j.id;ns.code=j.code}catch{return er.textContent='Could not reach the server. Try again.'}}else ns.code=genCode()}
+  S.sources.unshift(ns);
+  $('#srcType').value='';$('#srcUrl').value='';$('#srcUrl').disabled=true;$('#srcHint').style.display='none';er.textContent='';renderSrc();location.hash='sources';if(tg)openVer(ns.id);else toast('Traffic source submitted for review')};
+$('#srcList').onclick=e=>{const v=e.target.closest('[data-sv]'),d=e.target.closest('[data-sd]'),f=e.target.closest('[data-vf]');
+  if(v){const x=S.sources.find(y=>y.id==v.dataset.sv),st=ST[x.s];
+    $('#srcDet').innerHTML=`<p style="margin:0 0 8px"><b>${SRC[x.t][0]}</b> <span class="pill ${st[0]}">${st[1]}</span></p><p style="margin:0 0 8px;overflow-wrap:anywhere">${esc(x.u)}</p><p style="margin:0 0 8px">Submitted ${fmtD(x.d)}</p><p style="margin:0;color:var(--muted)">${{approved:x.auto?'Verified from the code in your Telegram description.':'This source is approved.',verify:'Add your code to the Telegram description, then press Verify now.',pending:'We’ll update the status here once it has been reviewed.',rejected:'This source was rejected. Delete it and add a corrected one.'}[x.s]}</p>`;dlg('#dSrc').showModal()}
+  if(f)openVer(f.dataset.vf);
+  if(d){if(VERIFY_API)fetch('/api/sources/'+d.dataset.sd,{method:'DELETE'}).catch(()=>{});S.sources=S.sources.filter(y=>y.id!=d.dataset.sd);renderSrc();toast('Traffic source deleted')}};
+const VERIFY_API='';// Set to your server route, e.g. '/api/sources/verify'. Empty = demo mode (the check is simulated).
+const genCode=()=>{const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return 'SE-'+[...crypto.getRandomValues(new Uint8Array(6))].map(b=>A[b%32]).join('')};
+let verId=null;
+function openVer(id){const x=S.sources.find(y=>y.id==id);if(!x)return;verId=x.id;
+  $('#vCode').textContent=x.code;$('#vUrl').textContent=x.u;$('#vMsg').textContent='';$('#vMsg').style.color='';
+  $('#vDemo').style.display=VERIFY_API?'none':'';$('#vAuto').style.display=VERIFY_API?'':'none';$('#vDemoChk').checked=false;$('#vGo').disabled=false;dlg('#dVer').showModal()}
+$('#vCopy').onclick=()=>copy($('#vCode').textContent);
+$('#vGo').onclick=async()=>{const x=S.sources.find(y=>y.id===verId),msg=$('#vMsg'),b=$('#vGo');if(!x)return;
+  b.disabled=true;msg.style.color='var(--muted)';msg.textContent='Checking your description…';
+  try{let ok,why='';
+    if(VERIFY_API){const r=await fetch(VERIFY_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:x.id})});const j=await r.json();ok=!!j.verified;why=j.reason||''}
+    else{await new Promise(r=>setTimeout(r,900));ok=$('#vDemoChk').checked}
+    if(ok){x.s='approved';x.auto=true;dlg('#dVer').close();renderSrc();toast('Telegram source verified');return}
+    msg.style.color='';msg.textContent=why||'Code not found in the description yet. Save the description in Telegram and try again.'
+  }catch{msg.style.color='';msg.textContent='Could not reach the verification server. Try again in a moment.'}
+  finally{b.disabled=false}};
+function renderPay(){$('#pg').innerHTML=METHODS.map(m=>{const on=S.method===m.id;return `<div class="pc${on?' sel':''}"><div class="logo">${m.name[0]}</div><h4>${m.name}${on?'<span class="pill a">In use</span>':''}</h4><ul><li>- ${chargeTxt(m)}</li><li>- Minimum payout: $${m.min}</li></ul><button class="btn${on?'':' fill'}" data-m="${m.id}">${on?'Edit':'Add'}</button></div>`}).join('')}
+
+const side=$('#side'),open=o=>side.classList.toggle('open',o);
+$('#ham').onclick=()=>open(true);$('#scrim').onclick=()=>open(false);
+$('#theme').onclick=()=>{const d=document.documentElement;d.dataset.theme=getComputedStyle(d).colorScheme==='dark'?'light':'dark'};
+const PAGES={dashboard:'Dashboard',links:'Manage links',withdraw:'Withdraw funds',payments:'Payment methods',sources:'Traffic sources','add-source':'Add traffic source'};
+function route(){const h=location.hash.slice(1)||'dashboard',p=PAGES[h]?h:'dashboard';
+  if(!PAGES[h])toast('That page is coming next');
+  $$('.page').forEach(s=>s.classList.toggle('on',s.id==='p-'+p));
+  $$('#menu a').forEach(a=>a.classList.toggle('on',a.dataset.p===p||(p==='add-source'&&a.dataset.p==='sources')));
+  $('#title').textContent=PAGES[p];document.title=PAGES[p];open(false);scrollTo(0,0)}
+addEventListener('hashchange',route);
+
+$('#month').innerHTML=months.map((m,i)=>`<option value="${i}">${m.label}</option>`).join('');
+$('#month').onchange=e=>{cur=+e.target.value;renderMonth()};
+const all=build(months[0]);$('#today').innerHTML=cards(sum([all[all.length-1]]));$('#now').textContent='31 October 2026';
+renderMonth();renderW();renderLinks();renderPay();renderSrc();route();
+if(VERIFY_API)fetch('/api/sources').then(r=>r.ok?r.json():[]).then(l=>{S.sources=l;renderSrc()}).catch(()=>{});
+</script>
+</body>
+</html>
