@@ -99,6 +99,20 @@ def list_sources():
     ])
 
 
+@app.post("/api/switch")
+def switch_user():
+    """Account switcher for the dashboard. Works only while DEMO_MODE=1.
+    With a real login system, switch users there instead (this route stays disabled)."""
+    if not DEMO_MODE:
+        return jsonify(error="Switching is disabled."), 403
+    raw = str((request.get_json(silent=True) or {}).get("user", "")).lower()
+    uid = re.sub(r"[^a-z0-9_-]", "", raw)[:30]
+    if not uid:
+        return jsonify(error="Unknown user."), 400
+    session["user_id"] = uid
+    return jsonify(ok=True)
+
+
 @app.delete("/api/sources/<sid>")
 def delete_source(sid):
     uid = current_user()
